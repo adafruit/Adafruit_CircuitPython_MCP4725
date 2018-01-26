@@ -35,7 +35,7 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MCP4725.git"
 
 
 # Internal constants:
-_MCP4725_DEFAULT_ADDRESS = const(0b01100000)
+_MCP4725_DEFAULT_ADDRESS = const(0b01100010)
 _MCP4725_WRITE_FAST_MODE = const(0b00000000)
 
 
@@ -92,7 +92,7 @@ class MCP4725:
             dac_high = self._BUFFER[1]
             dac_low = self._BUFFER[2] >> 4
             # Reconstruct 12-bit value and return it.
-            return ((dac_high << 8) | dac_low) & 0xFFF
+            return ((dac_high << 4) | dac_low) & 0xFFF
         finally:
             # Ensure bus is always unlocked.
             self._i2c.unlock()
