@@ -33,5 +33,5 @@ while True:
     for i in range(4095):
         dac.raw_value = i
     # Go back down the 12-bit raw range.
-    for i in range(4095, -1. -1):
+    for i in range(4095, -1, -1):
         dac.raw_value = i
