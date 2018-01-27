@@ -20,8 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`Adafruit_MCP4725`
-====================================================
+`adafruit_mcp4725` - MCP4725 digital to analog converter
+========================================================
 
 CircuitPython module for the MCP4725 digital to analog converter.  See
 examples/simpletest.py for a demo of the usage.
@@ -35,19 +35,17 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MCP4725.git"
 
 
 # Internal constants:
-_MCP4725_DEFAULT_ADDRESS = const(0b01100010)
+_MCP4725_DEFAULT_ADDRESS = 0b01100010
 _MCP4725_WRITE_FAST_MODE = const(0b00000000)
 
 
 class MCP4725:
     """MCP4725 12-bit digital to analog converter.  This class has a similar
-    interface as the CircuitPython AnalogOut class and can be used in place
-    of that module.  To construct pass the following parameters to the
-    initializer:
-    - i2c: The I2C bus.
+       interface as the CircuitPython AnalogOut class and can be used in place
+       of that module.
 
-    Optionally pass:
-    - address: The address of the device if set differently from the default.
+       :param ~busio.I2C i2c: The I2C bus.
+       :param int address: The address of the device if set differently from the default.
     """
 
 
@@ -99,11 +97,12 @@ class MCP4725:
 
     @property
     def value(self):
-        """Get and set the DAC value as a 16-bit unsigned value compatible
-        with the AnalogOut class.  Note that the MCP4725 is still just a 12-bit
-        device so quantization will occur.  If you'd like to instead deal with
-        the raw 12-bit value use the raw_value property, or the normalized_value
-        property to deal with a 0...1 float value.
+        """The DAC value as a 16-bit unsigned value compatible with the
+        :py:class:`~analogio.AnalogOut` class.
+
+        Note that the MCP4725 is still just a 12-bit device so quantization will occur.  If you'd
+        like to instead deal with the raw 12-bit value use the raw_value property, or the
+        normalized_value property to deal with a 0...1 float value.
         """
         raw_value = self._read()
         # Scale up to 16-bit range.
@@ -118,9 +117,8 @@ class MCP4725:
 
     @property
     def raw_value(self):
-        """Get and set the DAC value as a 12-bit unsigned value.  This is the
-        the true resolution of the DAC and will never peform scaling or run
-        into quantization error.
+        """The DAC value as a 12-bit unsigned value.  This is the the true resolution of the DAC
+        and will never peform scaling or run into quantization error.
         """
         return self._read()
 
@@ -130,8 +128,7 @@ class MCP4725:
 
     @property
     def normalized_value(self):
-        """Get and set the DAC value as a floating point number in the range
-        0 to 1.0.
+        """The DAC value as a floating point number in the range 0.0 to 1.0.
         """
         return self._read()/4095.0
 

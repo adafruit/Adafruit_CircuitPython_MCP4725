@@ -3,14 +3,16 @@ Introduction
 ============
 
 .. image:: https://readthedocs.org/projects/adafruit-circuitpython-mcp4725/badge/?version=latest
-
     :target: https://circuitpython.readthedocs.io/projects/mcp4725/en/latest/
-
     :alt: Documentation Status
 
 .. image :: https://img.shields.io/discord/327254708534116352.svg
     :target: https://discord.gg/nBQh6qu
     :alt: Discord
+
+.. image:: https://travis-ci.org/adafruit/Adafruit_CircuitPython_MCP4725.svg?branch=master
+    :target: https://travis-ci.org/adafruit/Adafruit_CircuitPython_MCP4725
+    :alt: Build Status
 
 CircuitPython module for the MCP4725 digital to analog converter.
 
