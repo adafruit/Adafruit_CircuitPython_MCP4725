@@ -24,9 +24,22 @@
 ========================================================
 
 CircuitPython module for the MCP4725 digital to analog converter.  See
-examples/simpletest.py for a demo of the usage.
+examples/mcp4725_simpletest.py for a demo of the usage.
 
 * Author(s): Tony DiCola
+
+Implementation Notes
+--------------------
+
+**Hardware:**
+
+* Adafruit `MCP4725 Breakout Board - 12-Bit DAC w/I2C Interface
+  <https://www.adafruit.com/product/935>`_ (Product ID: 935)
+
+**Software and Dependencies:**
+
+* Adafruit CircuitPython firmware for the ESP8622 and M0-based boards:
+  https://github.com/adafruit/circuitpython/releases
 """
 from micropython import const
 
@@ -40,12 +53,13 @@ _MCP4725_WRITE_FAST_MODE = const(0b00000000)
 
 
 class MCP4725:
-    """MCP4725 12-bit digital to analog converter.  This class has a similar
-       interface as the CircuitPython AnalogOut class and can be used in place
-       of that module.
+    """
+    MCP4725 12-bit digital to analog converter.  This class has a similar
+    interface as the CircuitPython AnalogOut class and can be used in place
+    of that module.
 
-       :param ~busio.I2C i2c: The I2C bus.
-       :param int address: The address of the device if set differently from the default.
+    :param ~busio.I2C i2c: The I2C bus.
+    :param int address: The address of the device if set differently from the default.
     """
 
 
@@ -97,12 +111,13 @@ class MCP4725:
 
     @property
     def value(self):
-        """The DAC value as a 16-bit unsigned value compatible with the
+        """
+        The DAC value as a 16-bit unsigned value compatible with the
         :py:class:`~analogio.AnalogOut` class.
 
         Note that the MCP4725 is still just a 12-bit device so quantization will occur.  If you'd
-        like to instead deal with the raw 12-bit value use the raw_value property, or the
-        normalized_value property to deal with a 0...1 float value.
+        like to instead deal with the raw 12-bit value use the ``raw_value`` property, or the
+        ``normalized_value`` property to deal with a 0...1 float value.
         """
         raw_value = self._read()
         # Scale up to 16-bit range.
