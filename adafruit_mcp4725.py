@@ -26,7 +26,7 @@
 CircuitPython module for the MCP4725 digital to analog converter.  See
 examples/mcp4725_simpletest.py for a demo of the usage.
 
-* Author(s): Tony DiCola
+* Author(s): Tony DiCola, Carter Nelson
 
 Implementation Notes
 --------------------
@@ -42,6 +42,7 @@ Implementation Notes
   https://github.com/adafruit/circuitpython/releases
 """
 from micropython import const
+from adafruit_bus_device import i2c_device
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MCP4725.git"
@@ -71,7 +72,7 @@ class MCP4725:
         # This device doesn't use registers and instead just accepts a single
         # command string over I2C.  As a result we don't use bus device or
         # other abstractions and just talk raw I2C protocol.
-        self._i2c = i2c
+        self._i2c = i2c_device.I2CDevice(i2c, address)
         self._address = address
 
     def _write_fast_mode(self, val):
@@ -79,35 +80,23 @@ class MCP4725:
         # Will not enter power down, update EEPROM, or any other state beyond
         # the 12-bit DAC value.
         assert 0 <= val <= 4095
-        try:
-            # Make sure bus is locked before write.
-            while not self._i2c.try_lock():
-                pass
-            # Build bytes to send to device with updated value.
-            val &= 0xFFF
-            self._BUFFER[0] = _MCP4725_WRITE_FAST_MODE | (val >> 8)
-            self._BUFFER[1] = val & 0xFF
-            self._i2c.writeto(self._address, self._BUFFER, end=2)
-        finally:
-            # Ensure bus is always unlocked.
-            self._i2c.unlock()
+        # Build bytes to send to device with updated value.
+        val &= 0xFFF
+        self._BUFFER[0] = _MCP4725_WRITE_FAST_MODE | (val >> 8)
+        self._BUFFER[1] = val & 0xFF
+        with self._i2c as i2c:
+            i2c.write(self._BUFFER, end=2)
 
     def _read(self):
         # Perform a read of the DAC value.  Returns the 12-bit value.
-        try:
-            # Make sure bus is locked before write.
-            while not self._i2c.try_lock():
-                pass
-            # Read 3 bytes from device.
-            self._i2c.readfrom_into(self._address, self._BUFFER)
-            # Grab the DAC value from last two bytes.
-            dac_high = self._BUFFER[1]
-            dac_low = self._BUFFER[2] >> 4
-            # Reconstruct 12-bit value and return it.
-            return ((dac_high << 4) | dac_low) & 0xFFF
-        finally:
-            # Ensure bus is always unlocked.
-            self._i2c.unlock()
+        # Read 3 bytes from device.
+        with self._i2c as i2c:
+            i2c.readinto(self._BUFFER)
+         # Grab the DAC value from last two bytes.
+        dac_high = self._BUFFER[1]
+        dac_low = self._BUFFER[2] >> 4
+        # Reconstruct 12-bit value and return it.
+        return ((dac_high << 4) | dac_low) & 0xFFF
 
     @property
     def value(self):
