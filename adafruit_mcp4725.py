@@ -63,7 +63,6 @@ class MCP4725:
     :param int address: The address of the device if set differently from the default.
     """
 
-
     # Global buffer to prevent allocations and heap fragmentation.
     # Note this is not thread-safe or re-entrant by design!
     _BUFFER = bytearray(3)
@@ -92,7 +91,7 @@ class MCP4725:
         # Read 3 bytes from device.
         with self._i2c as i2c:
             i2c.readinto(self._BUFFER)
-         # Grab the DAC value from last two bytes.
+        # Grab the DAC value from last two bytes.
         dac_high = self._BUFFER[1]
         dac_low = self._BUFFER[2] >> 4
         # Reconstruct 12-bit value and return it.
@@ -134,7 +133,7 @@ class MCP4725:
     def normalized_value(self):
         """The DAC value as a floating point number in the range 0.0 to 1.0.
         """
-        return self._read()/4095.0
+        return self._read() / 4095.0
 
     @normalized_value.setter
     def normalized_value(self, val):
