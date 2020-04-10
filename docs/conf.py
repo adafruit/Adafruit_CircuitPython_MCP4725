@@ -140,7 +140,7 @@ latex_documents = [
     (
         master_doc,
         "AdafruitMCP4725Library.tex",
-        "AdafruitMCP4725 Library Documentation",
+        "Adafruit MCP4725 Library Documentation",
         author,
         "manual",
     ),
