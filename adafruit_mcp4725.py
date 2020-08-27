@@ -41,6 +41,7 @@ Implementation Notes
 * Adafruit CircuitPython firmware for the ESP8622 and M0-based boards:
   https://github.com/adafruit/circuitpython/releases
 """
+import time
 from micropython import const
 from adafruit_bus_device import i2c_device
 
@@ -51,6 +52,7 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MCP4725.git"
 # Internal constants:
 _MCP4725_DEFAULT_ADDRESS = 0b01100010
 _MCP4725_WRITE_FAST_MODE = const(0b00000000)
+_MCP4725_WRITE_DAC_EEPROM = const(0b01100000)
 
 
 class MCP4725:
@@ -140,3 +142,19 @@ class MCP4725:
         assert 0.0 <= val <= 1.0
         raw_value = int(val * 4095.0)
         self._write_fast_mode(raw_value)
+
+    def save_to_eeprom(self):
+        """Store the current DAC value in EEPROM."""
+        # get it and write it
+        current_value = self._read()
+        self._BUFFER[0] = _MCP4725_WRITE_DAC_EEPROM
+        self._BUFFER[1] = (current_value >> 4) & 0xFF
+        self._BUFFER[2] = (current_value << 4) & 0xFF
+        with self._i2c as i2c:
+            i2c.write(self._BUFFER)
+        # wait for EEPROM write to complete
+        self._BUFFER[0] = 0x00
+        while not self._BUFFER[0] & 0x80:
+            time.sleep(0.05)
+            with self._i2c as i2c:
+                i2c.readinto(self._BUFFER, end=1)
