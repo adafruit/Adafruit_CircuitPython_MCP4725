@@ -149,7 +149,7 @@ class MCP4725:
         current_value = self._read()
         self._BUFFER[0] = _MCP4725_WRITE_DAC_EEPROM
         self._BUFFER[1] = (current_value >> 4) & 0xFF
-        self._BUFFER[2] = (current_value << 4) & 0XFF
+        self._BUFFER[2] = (current_value << 4) & 0xFF
         with self._i2c as i2c:
             i2c.write(self._BUFFER)
         # wait for EEPROM write to complete
