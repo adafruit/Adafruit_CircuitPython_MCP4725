@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
+# SPDX-License-Identifier: MIT
+
 # Simple demo of setting the DAC value up and down through its entire range
 # of values.
 # Author: Tony DiCola
