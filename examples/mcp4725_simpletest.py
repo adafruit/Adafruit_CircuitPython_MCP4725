@@ -1,6 +1,8 @@
+# SPDX-FileCopyrightText: 2018 Tony DiCola for Adafruit Industries
+# SPDX-License-Identifier: MIT
+
 # Simple demo of setting the DAC value up and down through its entire range
 # of values.
-# Author: Tony DiCola
 import board
 import busio
 
