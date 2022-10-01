@@ -28,6 +28,12 @@ import time
 from micropython import const
 from adafruit_bus_device import i2c_device
 
+try:
+    import typing  # pylint: disable=unused-import
+    from busio import I2C
+except ImportError:
+    pass
+
 __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MCP4725.git"
 
@@ -52,14 +58,14 @@ class MCP4725:
     # Note this is not thread-safe or re-entrant by design!
     _BUFFER = bytearray(3)
 
-    def __init__(self, i2c, *, address=_MCP4725_DEFAULT_ADDRESS):
+    def __init__(self, i2c: I2C, *, address: int = _MCP4725_DEFAULT_ADDRESS) -> None:
         # This device doesn't use registers and instead just accepts a single
         # command string over I2C.  As a result we don't use bus device or
         # other abstractions and just talk raw I2C protocol.
         self._i2c = i2c_device.I2CDevice(i2c, address)
         self._address = address
 
-    def _write_fast_mode(self, val):
+    def _write_fast_mode(self, val: int) -> None:
         # Perform a 'fast mode' write to update the DAC value.
         # Will not enter power down, update EEPROM, or any other state beyond
         # the 12-bit DAC value.
@@ -71,7 +77,7 @@ class MCP4725:
         with self._i2c as i2c:
             i2c.write(self._BUFFER, end=2)
 
-    def _read(self):
+    def _read(self) -> int:
         # Perform a read of the DAC value.  Returns the 12-bit value.
         # Read 3 bytes from device.
         with self._i2c as i2c:
@@ -83,7 +89,7 @@ class MCP4725:
         return ((dac_high << 4) | dac_low) & 0xFFF
 
     @property
-    def value(self):
+    def value(self) -> int:
         """
         The DAC value as a 16-bit unsigned value compatible with the
         :py:class:`~analogio.AnalogOut` class.
@@ -97,35 +103,35 @@ class MCP4725:
         return raw_value << 4
 
     @value.setter
-    def value(self, val):
+    def value(self, val: int) -> None:
         assert 0 <= val <= 65535
         # Scale from 16-bit to 12-bit value (quantization errors will occur!).
         raw_value = val >> 4
         self._write_fast_mode(raw_value)
 
     @property
-    def raw_value(self):
+    def raw_value(self) -> int:
         """The DAC value as a 12-bit unsigned value.  This is the the true resolution of the DAC
         and will never peform scaling or run into quantization error.
         """
         return self._read()
 
     @raw_value.setter
-    def raw_value(self, val):
+    def raw_value(self, val: int) -> None:
         self._write_fast_mode(val)
 
     @property
-    def normalized_value(self):
+    def normalized_value(self) -> float:
         """The DAC value as a floating point number in the range 0.0 to 1.0."""
         return self._read() / 4095.0
 
     @normalized_value.setter
-    def normalized_value(self, val):
+    def normalized_value(self, val: float) -> None:
         assert 0.0 <= val <= 1.0
         raw_value = int(val * 4095.0)
         self._write_fast_mode(raw_value)
 
-    def save_to_eeprom(self):
+    def save_to_eeprom(self) -> None:
         """Store the current DAC value in EEPROM."""
         # get it and write it
         current_value = self._read()
