@@ -8,7 +8,6 @@ import busio
 
 import adafruit_mcp4725
 
-
 # Initialize I2C bus.
 i2c = busio.I2C(board.SCL, board.SDA)
 
